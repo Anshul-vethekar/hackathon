@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 from data_factory import FactoryData, DisruptionInput, minutes_to_clock
 from scheduler import ScheduleResult
 from validation import validate_schedule, ValidationReport
@@ -41,15 +41,12 @@ def calculate_metrics(
     factory_data: FactoryData,
     baseline_result: Optional[ScheduleResult] = None
 ) -> ScheduleMetrics:
-    """Calculates all production KPIs accurately from the schedule."""
     schedule = schedule_result.schedule
     unscheduled = schedule_result.unscheduled_ops
     disruption = schedule_result.disruption_applied
 
-    # Validate schedule
     val_report = validate_schedule(schedule, unscheduled, factory_data, disruption)
 
-    # Work Order Completion Times
     wo_completions: Dict[str, int] = {}
     wo_op_counts: Dict[str, int] = {wo_id: 0 for wo_id in factory_data.work_orders}
     scheduled_wo_op_counts: Dict[str, int] = {wo_id: 0 for wo_id in factory_data.work_orders}
@@ -71,7 +68,6 @@ def calculate_metrics(
     critical_at_risk = 0
 
     for wo_id, wo in factory_data.work_orders.items():
-        # Only evaluate completion time if order is fully scheduled
         if scheduled_wo_op_counts[wo_id] == wo_op_counts[wo_id]:
             comp = wo_completions[wo_id]
             if comp > wo.due_time:
@@ -84,14 +80,11 @@ def calculate_metrics(
             elif comp >= wo.due_time - 30 and wo.priority == "Critical":
                 critical_at_risk += 1
         else:
-            # Unscheduled or partially scheduled
             if wo.priority == "Critical":
                 critical_at_risk += 1
 
-    # Machine metrics
     total_processing_time = sum(sched["finish_time"] - sched["start_time"] for sched in schedule.values())
 
-    # Total available operating time per machine = shift (600m) - breakdown - maintenance
     total_avail_time = 0
     bd_machine = disruption.machine_id if disruption else None
     bd_dur = disruption.breakdown_duration if disruption else 0
@@ -108,7 +101,6 @@ def calculate_metrics(
     idle_minutes = max(0, total_avail_time - total_processing_time)
     idle_hours = round(idle_minutes / 60.0, 2)
 
-    # Changeovers
     changeovers = 0
     machine_ops: Dict[str, List[Tuple[int, str]]] = {m: [] for m in factory_data.machines}
     for op_id, sched in schedule.items():
@@ -120,7 +112,6 @@ def calculate_metrics(
             if ops_list[i][1] != ops_list[i+1][1]:
                 changeovers += 1
 
-    # Operations movement and delays vs baseline
     moved_ops = 0
     delayed_ops = 0
 
@@ -153,7 +144,6 @@ def calculate_metrics(
     )
 
 def compare_metrics(baseline: ScheduleMetrics, recovery: ScheduleMetrics) -> MetricComparison:
-    """Compares recovery schedule against baseline metrics."""
     tard_delta_min = recovery.total_tardiness_minutes - baseline.total_tardiness_minutes
     tard_delta_hr = round(tard_delta_min / 60.0, 2)
     late_delta = recovery.late_work_orders - baseline.late_work_orders
@@ -161,7 +151,6 @@ def compare_metrics(baseline: ScheduleMetrics, recovery: ScheduleMetrics) -> Met
     util_delta = round(recovery.machine_utilization_pct - baseline.machine_utilization_pct, 1)
     idle_delta = round(recovery.machine_idle_hours - baseline.machine_idle_hours, 2)
 
-    # Narrative summary of trade-offs
     summary_parts = []
     if crit_delta < 0:
         summary_parts.append(f"Reduced critical order lateness by {abs(crit_delta)} orders.")
