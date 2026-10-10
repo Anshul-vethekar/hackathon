@@ -1,0 +1,5 @@
+machine_id,name,supported_operations,shift_start,shift_end,maint_start,maint_end
+M1,CNC Milling,Milling;Drilling;Engraving,0,600,-1,-1
+M2,CNC Lathe,Turning;Drilling;Polishing,0,600,-1,-1
+M3,Multi-Axis Machining Center,Milling;Turning;Drilling;Assembly,0,600,120,150
+M4,Quality & Assembly Station,Assembly;Inspection;Finishing,0,600,-1,-1

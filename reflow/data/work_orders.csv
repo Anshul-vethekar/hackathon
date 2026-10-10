@@ -1,0 +1,9 @@
+work_order_id,customer_name,priority,release_time,due_time
+WO-01,AeroSpace Corp,Critical,0,420
+WO-02,Medical Systems,Critical,0,450
+WO-03,Automotive Dynamics,High,0,510
+WO-04,Energy Solutions,High,30,540
+WO-05,Heavy Machinery Inc,Medium,0,570
+WO-06,Robotics Tech,Medium,60,570
+WO-07,Commercial Tools,Low,0,600
+WO-08,Precision Defense,Critical,0,480

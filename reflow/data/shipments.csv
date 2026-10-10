@@ -1,0 +1,2 @@
+shipment_id,material_id,quantity,expected_arrival_time
+SHP-01,MAT-02,50,60

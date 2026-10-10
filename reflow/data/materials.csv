@@ -1,0 +1,5 @@
+material_id,name,initial_quantity,unit
+MAT-01,Aluminum Alloy Ingot,100,kg
+MAT-02,Precision Bearings,0,units
+MAT-03,Fasteners & Seals,200,sets
+MAT-04,Carbon Fiber Composites,50,sheets

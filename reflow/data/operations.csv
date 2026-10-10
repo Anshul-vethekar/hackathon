@@ -1,0 +1,17 @@
+operation_id,work_order_id,stage_name,processing_duration,compatible_machines,required_material_id,required_material_qty,predecessors
+OP-101,WO-01,Milling,60,M1;M3,MAT-01,10,
+OP-102,WO-01,Assembly,45,M4;M3,MAT-02,5,OP-101
+OP-201,WO-02,Turning,90,M2;M3,MAT-01,15,
+OP-202,WO-02,Inspection,30,M4,,0,OP-201
+OP-301,WO-03,Milling,75,M1;M3,MAT-01,20,
+OP-302,WO-03,Finishing,45,M4,MAT-03,10,OP-301
+OP-401,WO-04,Turning,60,M2;M3,MAT-01,10,
+OP-402,WO-04,Drilling,45,M1;M2;M3,MAT-03,15,OP-401
+OP-501,WO-05,Milling,90,M1;M3,MAT-01,15,
+OP-502,WO-05,Turning,60,M2;M3,MAT-03,10,OP-501
+OP-601,WO-06,Drilling,60,M1;M2;M3,MAT-04,5,
+OP-602,WO-06,Assembly,60,M4;M3,MAT-02,10,OP-601
+OP-701,WO-07,Turning,75,M2;M3,MAT-01,10,
+OP-702,WO-07,Inspection,30,M4,,0,OP-701
+OP-801,WO-08,Milling,60,M1;M3,MAT-01,10,
+OP-802,WO-08,Polishing,45,M2,,0,OP-801
